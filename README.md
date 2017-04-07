@@ -16,3 +16,8 @@ Using the provided audio file (01 PCM Rock Sample.mp3), do the following:
  considerably more than just two or three adjacent samples)
 
 3. Implement other sound effects. Be creative and show us what you can do! [200 XP]
+
+Install Minim:
+Open Processing
+Sketch > Import Library... > Add Library...
+Search for minim and click install
