@@ -36,18 +36,20 @@ void setup(){
   textFont(createFont("Serif", 24));
   
   //reverse
-  println("song length: " + song.length());
-
   songBuffer = new MultiChannelBuffer(2,1024);
   minim.loadFileIntoBuffer("01_PCM_Rock_Sample.mp3",songBuffer);
   
   println("buffersize: " + songBuffer.getBufferSize() + ", channels: " + songBuffer.getChannelCount());
   
-  AudioSample reversedResult = reverse();
+  AudioSample reversedResult = reverse(songBuffer);
   
-  reversedResult.trigger();
+  AudioSample reversedReversedResult = reverse(reversedSongBuffer);
   
+  reversedReversedResult.trigger();
+  
+  println("original lenght: " + song.length());
   println("reversed length: " + reversedResult.length());
+  println("reversed reversed length: " + reversedReversedResult.length());
 }
 
 void draw(){
@@ -82,13 +84,13 @@ void stop(){
   super.stop();
 }
 
-AudioSample reverse(){
+AudioSample reverse(MultiChannelBuffer toReverse){
    reversedSongBuffer = new MultiChannelBuffer(1,1);
-   reversedSongBuffer.set(songBuffer);
+   reversedSongBuffer.set(toReverse);
    
-   for(int i = 0; i < songBuffer.getBufferSize(); i++){
-     reversedSongBuffer.setSample(0, i, songBuffer.getSample(0,songBuffer.getBufferSize()-i-1));
-     reversedSongBuffer.setSample(1, i, songBuffer.getSample(1,songBuffer.getBufferSize()-i-1));
+   for(int i = 0; i < toReverse.getBufferSize(); i++){
+     reversedSongBuffer.setSample(0, i, toReverse.getSample(0,toReverse.getBufferSize()-i-1));
+     reversedSongBuffer.setSample(1, i, toReverse.getSample(1,toReverse.getBufferSize()-i-1));
    }
    
    println("reversedSongBuffer size: " + reversedSongBuffer.getBufferSize());
