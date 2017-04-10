@@ -22,15 +22,14 @@ import ddf.minim.*;
 Minim minim;
 AudioPlayer song;
 MultiChannelBuffer songBuffer;
+MultiChannelBuffer reversedSongBuffer;
 
 void setup(){
   //code
   minim = new Minim(this);
   song = minim.loadFile("01_PCM_Rock_Sample.mp3");
   println("song length: " + song.length());
-  //song.play();
-  
-  //MultiChannelBuffer songBuffer = new MultiChannelBuffer(2,1024);
+
   songBuffer = new MultiChannelBuffer(2,1024);
   minim.loadFileIntoBuffer("01_PCM_Rock_Sample.mp3",songBuffer);
   
@@ -56,9 +55,23 @@ void stop(){
 }
 
 AudioSample reverse(){
-  float[] leftOriginal = new float[songBuffer.getBufferSize()];
+   reversedSongBuffer = new MultiChannelBuffer(1,1);
+   reversedSongBuffer.set(songBuffer);
+   
+   for(int i = 0; i < songBuffer.getBufferSize(); i++){
+     reversedSongBuffer.setSample(0, i, songBuffer.getSample(0,songBuffer.getBufferSize()-i-1));
+     reversedSongBuffer.setSample(1, i, songBuffer.getSample(1,songBuffer.getBufferSize()-i-1));
+   }
+   
+   println("reversedSongBuffer size: " + reversedSongBuffer.getBufferSize());
+   
+     AudioSample reverse = minim.createSample(reversedSongBuffer.getChannel(0), reversedSongBuffer.getChannel(1), song.getFormat());
+  return reverse;
+}
+
+/*
+AudioSample reverse(){
   float[] leftReversed = new float[songBuffer.getBufferSize()];
-  float[] rightOriginale = new float[songBuffer.getBufferSize()];
   float[] rightReversed = new float[songBuffer.getBufferSize()];
   
   for(int i = 0; i < songBuffer.getBufferSize(); i++){
@@ -69,5 +82,6 @@ AudioSample reverse(){
   AudioSample reverse = minim.createSample(leftReversed, rightReversed, song.getFormat());
   return reverse;
 }
+*/
 
 //probably more functions here
