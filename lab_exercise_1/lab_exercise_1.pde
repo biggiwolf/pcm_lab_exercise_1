@@ -41,18 +41,23 @@ void setup(){
   
   println("buffersize: " + songBuffer.getBufferSize() + ", channels: " + songBuffer.getChannelCount());
   
-  MultiChannelBuffer reversedResult = reverse(songBuffer);
+  //MultiChannelBuffer reversedResult = reverse(songBuffer);
   
-  MultiChannelBuffer reversedReversedResult = reverse(reversedResult);
+  //MultiChannelBuffer reversedReversedResult = reverse(reversedResult);
   
-  AudioSample original = minim.createSample(songBuffer.getChannel(0), songBuffer.getChannel(1), song.getFormat());
-  AudioSample reverse = minim.createSample(reversedReversedResult.getChannel(0), reversedReversedResult.getChannel(1), song.getFormat());
+  //AudioSample original = minim.createSample(songBuffer.getChannel(0), songBuffer.getChannel(1), song.getFormat());
+  //AudioSample reverse = minim.createSample(reversedReversedResult.getChannel(0), reversedReversedResult.getChannel(1), song.getFormat());
   
-  original.trigger();
+  //original.trigger();
   
-  println("original lenght: " + songBuffer.getBufferSize());
-  println("reversed length: " + reversedResult.getBufferSize());
-  println("reversed reversed length: " + reversedReversedResult.getBufferSize());
+  //AudioSample reverse = reverse(songBuffer);
+  
+  //println("original lenght: " + songBuffer.getBufferSize());
+  //println("reversed length: " + reversedResult.getBufferSize());
+  //println("reversed reversed length: " + reversedReversedResult.getBufferSize());
+  
+  AudioSample copy = copy(1);
+  copy.trigger();
 }
 
 void draw(){
@@ -87,6 +92,7 @@ void stop(){
   super.stop();
 }
 
+/*
 MultiChannelBuffer reverse(MultiChannelBuffer toReverse){
    MultiChannelBuffer reversedSongBuffer = new MultiChannelBuffer(1,1);
    reversedSongBuffer.set(toReverse);
@@ -103,20 +109,44 @@ MultiChannelBuffer reverse(MultiChannelBuffer toReverse){
    
    return reversedSongBuffer;
 }
+*/
 
-/*
-AudioSample reverse(){
-  float[] leftReversed = new float[songBuffer.getBufferSize()];
-  float[] rightReversed = new float[songBuffer.getBufferSize()];
+
+AudioSample reverse(MultiChannelBuffer toReverse){
+  float[] leftReversed = new float[toReverse.getBufferSize()];
+  float[] rightReversed = new float[toReverse.getBufferSize()];
   
-  for(int i = 0; i < songBuffer.getBufferSize(); i++){
-   leftReversed[i] = songBuffer.getSample(0,songBuffer.getBufferSize()-i-1);
-   rightReversed[i] = songBuffer.getSample(1,songBuffer.getBufferSize()-i-1);
+  for(int i = 0; i < toReverse.getBufferSize(); i++){
+   leftReversed[i] = toReverse.getSample(0,toReverse.getBufferSize()-i-1);
+   rightReversed[i] = toReverse.getSample(1,toReverse.getBufferSize()-i-1);
   }
   
   AudioSample reverse = minim.createSample(leftReversed, rightReversed, song.getFormat());
   return reverse;
 }
-*/
+
+AudioSample copy(int o){
+  AudioPlayer original;
+  
+  MultiChannelBuffer originalBuffer = new MultiChannelBuffer(2,1024);
+  minim.loadFileIntoBuffer("01_PCM_Rock_Sample.mp3",originalBuffer);
+  
+  original = minim.loadFile("01_PCM_Rock_Sample.mp3", originalBuffer.getBufferSize());
+  
+  float[] leftChannel = original.left.toArray();
+  float[] rightChannel = original.right.toArray();
+  
+  println("left channel size: " + leftChannel.length + " , right channel size: " + rightChannel.length);
+  
+  for(int i = 0; i < 2000; i++){
+   println("i = " + i + " left channel: " + original.left.get(i) + " , right channel: " + original.right.get(i)); 
+  }
+  
+  AudioSample copy = minim.createSample(leftChannel, rightChannel, song.getFormat());
+  
+  return copy;
+  
+}
+
 
 //probably more functions here
