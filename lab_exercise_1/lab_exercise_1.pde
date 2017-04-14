@@ -24,7 +24,10 @@ AudioPlayer song;
 //MultiChannelBuffer songBuffer;
 //MultiChannelBuffer reversedSongBuffer;
 AudioMetaData meta;
-
+int w = 0;
+float r = 0.0f;
+float g = 83.0f;
+float b = 166.0f;
 void setup(){
   minim = new Minim(this);
   song = minim.loadFile("01_PCM_Rock_Sample.mp3");
@@ -32,6 +35,8 @@ void setup(){
   //metadata
   meta = song.getMetaData();
   size(512, 512);
+  
+  song.play();
   
   textFont(createFont("Serif", 24));
   
@@ -55,28 +60,52 @@ void setup(){
   println("reversed reversed length: " + reversedReversedResult.getBufferSize());
 }
 
-void draw(){
-   //metadata
-  int ys = 25;
-  int yi = 26;
-  background(0);
-  int y = ys;
-  text("File Name: " + meta.fileName(), 5, y);
-  text("Length (in milliseconds): " + meta.length(), 5, y+=yi);
-  text("Title: " + meta.title(), 5, y+=yi);
-  text("Author: " + meta.author(), 5, y+=yi); 
-  text("Album: " + meta.album(), 5, y+=yi);
-  text("Date: " + meta.date(), 5, y+=yi);
-  text("Comment: " + meta.comment(), 5, y+=yi);
-  text("Lyrics: " + meta.lyrics(), 5, y+=yi ); 
-  text("Track: " + meta.track(), 5, y+=yi);
-  text("Genre: " + meta.genre(), 5, y+=yi);
-  text("Copyright: " + meta.copyright(), 5, y+=yi);
-  text("Disc: " + meta.disc(), 5, y+=yi);
-  text("Composer: " + meta.composer(), 5, y+=yi);
-  text("Orchestra: " + meta.orchestra(), 5, y+=yi);
-  text("Publisher: " + meta.publisher(), 5, y+=yi);
-  text("Encoded: " + meta.encoded(), 5, y+=yi);
+void draw(){  
+  
+  if(w == 0)
+  {
+     //metadata
+    int ys = 25;
+    int yi = 26;
+    background(0);
+    int y = ys;
+    text("File Name: " + meta.fileName(), 5, y);
+    text("Length (in milliseconds): " + meta.length(), 5, y+=yi);
+    text("Title: " + meta.title(), 5, y+=yi);
+    text("Author: " + meta.author(), 5, y+=yi); 
+    text("Album: " + meta.album(), 5, y+=yi);
+    text("Date: " + meta.date(), 5, y+=yi);
+    text("Comment: " + meta.comment(), 5, y+=yi);
+    text("Lyrics: " + meta.lyrics(), 5, y+=yi ); 
+    text("Track: " + meta.track(), 5, y+=yi);
+    text("Genre: " + meta.genre(), 5, y+=yi);
+    text("Copyright: " + meta.copyright(), 5, y+=yi);
+    text("Disc: " + meta.disc(), 5, y+=yi);
+    text("Composer: " + meta.composer(), 5, y+=yi);
+    text("Orchestra: " + meta.orchestra(), 5, y+=yi);
+    text("Publisher: " + meta.publisher(), 5, y+=yi);
+    text("Encoded: " + meta.encoded(), 5, y+=yi);
+    text("Press 'w' to get the waveform!", 5, y+=yi+5);
+  }
+  else
+  {
+    background(0);
+    r += 2.0f;
+    g += 2.0f;
+    b += 2.0f;
+    if(r >= 255)
+      r = 0;
+    if(g >= 255)
+      g = 0;
+    if(b >= 255)
+      b = 0;
+    stroke(r, g, b);
+    for(int i = 0; i < song.bufferSize() - 1; i++)
+    {
+      line(i, mouseY - 50 + song.left.get(i)*mouseX, i+1, mouseY - 50 + song.left.get(i+1)*mouseX);
+      line(i, mouseY + 50 + song.right.get(i)*mouseX, i+1, mouseY + 50 + song.right.get(i+1)*mouseX);
+    }
+  }
 }
 
 void stop(){
@@ -120,3 +149,18 @@ AudioSample reverse(){
 */
 
 //probably more functions here
+
+void keyPressed()
+{
+  if(key == 'W' || key == 'w')
+  {
+    if(w == 0)
+    {
+      w = 1;
+    }
+    else
+    {
+      w = 0;
+    }
+  }
+}
