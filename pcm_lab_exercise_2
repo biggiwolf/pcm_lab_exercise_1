@@ -1,0 +1,18 @@
+PImage image = loadImage("PCMLab8.png");
+size(208,278);
+image(image,0,0,width,height); // fills the screen with the picture
+
+//grayscale
+for(int x=0; x<width; x++)
+{
+ for(int y=0; y<height; y++)
+ {
+     color c = get(x,y);
+     float red = red(c);
+     float green = green(c);
+     float blue = blue(c);
+     int grey = (int)(0.3*red+0.59*green+0.11*blue);
+     color Color =color(grey,grey,grey);
+     set(x,y,Color);
+ }
+}
