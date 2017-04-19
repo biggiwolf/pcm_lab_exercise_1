@@ -16,3 +16,33 @@ for(int x=0; x<width; x++)
      set(x,y,Color);
  }
 }
+
+//threshold
+PImage threshold;
+threshold = createImage(image.width, image.height, RGB);
+float thresholdvalue = 170;
+for(int x=0; x < image.width; x++)
+{
+ for(int y=0; y < image.height; y++)
+ {   
+     color black = color(0);
+     color white = color(255);
+     
+     loadPixels();
+     int value = y*image.width+x; //get(x,y);
+     if (brightness(image.pixels[value]) > thresholdvalue){
+       threshold.pixels[value] = color(255); 
+       //set(x,y, white);
+      } else {
+       threshold.pixels[value] = color(0);
+        //set(x,y, black);
+      }
+      
+      
+      threshold.updatePixels();
+      //to see grayscale disable following command
+      image(threshold,0,0);
+      
+     
+ }
+}
